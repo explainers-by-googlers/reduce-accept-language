@@ -186,3 +186,4 @@ Sending the primary language in the `Accept-Language` header will allow us to al
 * [https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language)
 * [https://wonderproxy.com/blog/accept-language/](https://wonderproxy.com/blog/accept-language/)
 * https://github.com/WICG/lang-client-hint
+* https://www.rfc-editor.org/rfc/authors/rfc9110.html#name-accept-language
