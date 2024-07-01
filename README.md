@@ -13,7 +13,7 @@
 - [Feature Compatibility](#feature-compatibility)
 - [Challenges](#challenges)
   - [Web Compatibility](#web-compatibility)
-  - [Large Variants size](#large-variants-size)
+  - [Large Avail-Language size](#large-avail-language-size)
 - [FAQ](#faq)
   - [What user needs are solved by reducing the Accept-Language header?](#what-user-needs-are-solved-by-reducing-the-accept-language-header)
   - [Do we need to update the JavaScript interface (i.e. Navigator.languages) too?](#do-we-need-to-update-the-javascript-interface-ie-navigatorlanguages-too)
@@ -76,9 +76,9 @@ In this case, the user received content in their preferred language. No further 
 
 ### `Content-Language` doesn't match `Accept-Language`
 
-Instead of sending a full list of the users' preferred languages from browsers and letting sites figure out which language to use, we propose a language negotiation process in the browser, which means in addition to the `Content-Language` header, the site also needs to respond with a header indicating all languages it supports using the `Variants` header (as proposed in [HTTP representation variants](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-variants-06)).
+Instead of sending a full list of the users' preferred languages from browsers and letting sites figure out which language to use, we propose a language negotiation process in the browser, which means in addition to the `Content-Language` header, the site also needs to respond with a header indicating all languages it supports using the `Avail-Language` header (as proposed in [HTTP Availability Hints](https://mnot.github.io/I-D/draft-nottingham-http-availability-hints.html#section-5.3)).
 
-For now, the response header will include both `Content-Language` and `Variants`. Let’s see how language negotiation works with the following examples:
+For now, the response header will include both `Content-Language` and `Avail-Language`. Let’s see how language negotiation works with the following examples:
 
 
 1. Site supported language contains user’s preferred language.
@@ -90,13 +90,13 @@ For now, the response header will include both `Content-Language` and `Variants`
     Accept-Language: en
     ```
 
-* `https://example.com` doesn’t have a page in English. The server either guesses the users’ preference or sends a page with a default language such as French to users.  To allow language negotiation in the browser if the language the site chose to send the content in differs from the user’s preferred language, the site will respond with a list of supported languages in the Variants header: Spanish (es) and French (fr).
+* `https://example.com` doesn’t have a page in English. The server either guesses the users’ preference or sends a page with a default language such as French to users.  To allow language negotiation in the browser if the language the site chose to send the content in differs from the user’s preferred language, the site will respond with a list of supported languages in the Avail-Language header: Spanish (es) and French (fr).
 
     ```
     HTTP/1.1 200 OK
     Content-Language: fr
     Vary: Accept-Language   # Vary is used to key the HTTP cache
-    Variants: Accept-Language=(es fr)
+    Avail-Language: es, fr
     ```
 
 * The browser sees that the `Content-Language` doesn’t match any of the user's accepted languages, but it knows the server can provide the content in one of the user's accepted languages: Spanish (es).  Therefore, the browser resends the request as follows (the browser will only retry once for each request to avoid infinite retries):
@@ -113,7 +113,7 @@ For now, the response header will include both `Content-Language` and `Variants`
     HTTP/1.1 200 OK
     Content-Language: es
     Vary: Accept-Language   # Vary is used to key the HTTP cache
-    Variants: Accept-Language=(es fr)
+    Avail-Language: es, fr
     ```
 
 2. The site’s supported languages don’t match any of the user’s accepted languages
@@ -132,9 +132,9 @@ This section attempts to document the major challenges for the proposal to gain 
 
 In addition to the scenarios where we reduce the fingerprinting to protect user’s privacy, we also want to maintain web compatibility. Even though sending the preferred language by default might reveal some information about the user, we feel it’s important to minimize the breakage of features that depend on `Accept-Language` as much as possible to maintain stability of the web ecosystem.
 
-### Large Variants size
+### Large Avail-Language size
 
-One of the challenging situations is that a site can support infinite [ possible languages](https://www.iso.org/iso-639-language-codes.html) because of arbitrary subtags, and the `Variants` header could get large, however unlikely. It could be problematic to send such a large field in the HTTP response header. One option to mitigate this issue is that servers can simply not include the Variants header in the server's response when a site supports all or most of the possible languages. Another possible option is that we might suggest sites send `Variants: (Accept-Language=*)` to indicate sites that support all or most of the possible languages. In addition to those, we could also send all the languages sites supported in the `Variants` header regardless of how large the payload will be. Assuming about 500 languages with 5 characters on average per language/locale, the total size of the Variants header would be about 2.5KB.
+One of the challenging situations is that a site can support infinite [ possible languages](https://www.iso.org/iso-639-language-codes.html) because of arbitrary subtags, and the `Avail-Language` header could get large, however unlikely. It could be problematic to send such a large field in the HTTP response header. One option to mitigate this issue is that servers can simply not include the Avail-Language header in the server's response when a site supports all or most of the possible languages. Another possible option is that we might suggest sites send `Avail-Language: *` to indicate sites that support all or most of the possible languages. In addition to those, we could also send all the languages sites supported in the `Avail-Language` header regardless of how large the payload will be. Assuming about 500 languages with 5 characters on average per language/locale, the total size of the Avail-Language header would be about 2.5KB.
 
 ## FAQ
 
