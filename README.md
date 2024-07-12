@@ -1,5 +1,7 @@
 # Explainer: Reduce fingerprinting in the Accept-Language header
 
+This proposal is an early design sketch by Privacy Sandbox to describe the problem below and solicit feedback on the proposed solution. It has not been approved to ship in Chrome.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
